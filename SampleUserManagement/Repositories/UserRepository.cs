@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 using SampleUserManagement.Models;
 using System;
 using System.Collections.Generic;
@@ -10,9 +11,11 @@ namespace SampleUserManagement.Repositories
 {
     public class UserRepository
     {
+        private string DataLink = Directory.GetParent(Directory.GetCurrentDirectory()).FullName + "/SampleUserManagement/MOCK_DATA.json";
+
         public List<User> GetAllUsers()
         {
-            var json = File.ReadAllText("C:/Users/tmcbr/Desktop/MOCK_DATA.json");
+            var json = File.ReadAllText(DataLink);
             var userList = JsonConvert.DeserializeObject<IEnumerable<User>>(json).ToList();
             foreach(var user in userList)
             {
@@ -24,7 +27,7 @@ namespace SampleUserManagement.Repositories
 
         public User GetSingleUser(string userId)
         {
-            var json = File.ReadAllText("C:/Users/tmcbr/Desktop/MOCK_DATA.json");
+            var json = File.ReadAllText(DataLink);
             var userList = JsonConvert.DeserializeObject<IEnumerable<User>>(json).ToList();
 
             var desiredUser =
@@ -41,7 +44,7 @@ namespace SampleUserManagement.Repositories
             var userList = GetAllUsers();
             userList.Add(user);
             var json = JsonConvert.SerializeObject(userList);
-            File.WriteAllText("C:/Users/tmcbr/Desktop/MOCK_DATA.json", json);
+            File.WriteAllText(DataLink, json);
         }
 
         public void UpdateUser(User user)
@@ -61,7 +64,7 @@ namespace SampleUserManagement.Repositories
                 userList.Insert(userIndex, user);
             }
             var json = JsonConvert.SerializeObject(userList);
-            File.WriteAllText("C:/Users/tmcbr/Desktop/MOCK_DATA.json", json);
+            File.WriteAllText(DataLink, json);
         }
 
         public void DeleteUser(string userId)
@@ -81,7 +84,7 @@ namespace SampleUserManagement.Repositories
                 userList.RemoveAt(userIndex);
             }
             var json = JsonConvert.SerializeObject(userList);
-            File.WriteAllText("C:/Users/tmcbr/Desktop/MOCK_DATA.json", json);
+            File.WriteAllText(DataLink, json);
         }
     }
 }
