@@ -17,7 +17,7 @@ namespace SampleUserManagement.Repositories
         {
             var json = File.ReadAllText(DataLink);
             var userList = JsonConvert.DeserializeObject<IEnumerable<User>>(json).ToList();
-            foreach(var user in userList)
+            foreach (var user in userList)
             {
                 user.userId = user.userId.ToUpper();
             }
@@ -30,13 +30,7 @@ namespace SampleUserManagement.Repositories
             var json = File.ReadAllText(DataLink);
             var userList = JsonConvert.DeserializeObject<IEnumerable<User>>(json).ToList();
 
-            var desiredUser =
-                from user in userList
-                where user.userId == userId
-                select user;
-
-            return desiredUser.FirstOrDefault();
-
+            return userList.Single(u => u.userId.Equals(userId, StringComparison.OrdinalIgnoreCase));
         }
 
         public void CreateUser(User user)
@@ -50,19 +44,15 @@ namespace SampleUserManagement.Repositories
         public void UpdateUser(User user)
         {
             var userList = GetAllUsers();
-            int userIndex = -1;
 
-            foreach(var userEntry in userList)
-            {
-                if (userEntry.userId.ToUpper() == user.userId.ToUpper())
-                {
-                    userIndex = userList.IndexOf(userEntry);
-                }
-            }
-            if(userIndex != -1)
-            {
-                userList.Insert(userIndex, user);
-            }
+            var existingUser = GetSingleUser(user.userId);
+
+            existingUser.department = user.department;
+            existingUser.firstName = user.firstName;
+            existingUser.lastName = user.lastName;
+            existingUser.phoneNumber = user.phoneNumber;
+            existingUser.userId = user.userId;
+
             var json = JsonConvert.SerializeObject(userList);
             File.WriteAllText(DataLink, json);
         }
@@ -70,19 +60,10 @@ namespace SampleUserManagement.Repositories
         public void DeleteUser(string userId)
         {
             var userList = GetAllUsers();
-            int userIndex = -1;
 
-            foreach (var userEntry in userList)
-            {
-                if (userEntry.userId.ToUpper() == userId.ToUpper())
-                {
-                    userIndex = userList.IndexOf(userEntry);
-                }
-            }
-            if (userIndex != -1)
-            {
-                userList.RemoveAt(userIndex);
-            }
+            var existingUser = GetSingleUser(userId);
+            userList.Remove(existingUser);
+
             var json = JsonConvert.SerializeObject(userList);
             File.WriteAllText(DataLink, json);
         }
