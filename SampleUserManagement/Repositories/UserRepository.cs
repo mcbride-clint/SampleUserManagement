@@ -45,7 +45,7 @@ namespace SampleUserManagement.Repositories
         {
             var userList = GetAllUsers();
 
-            var existingUser = GetSingleUser(user.userId);
+            var existingUser = userList.Single(u => u.userId.Equals(user.userId, StringComparison.OrdinalIgnoreCase));
 
             existingUser.department = user.department;
             existingUser.firstName = user.firstName;
@@ -61,7 +61,7 @@ namespace SampleUserManagement.Repositories
         {
             var userList = GetAllUsers();
 
-            var existingUser = GetSingleUser(userId);
+            var existingUser = userList.Single(u => u.userId.Equals(userId, StringComparison.OrdinalIgnoreCase));
             userList.Remove(existingUser);
 
             var json = JsonConvert.SerializeObject(userList);
